@@ -1,7 +1,7 @@
 import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { getServerSession } from "next-auth";
-import {authOption } from "@/api/auth/[...nextauth]/route"
+import { authOption } from "@/utils/authOptions";
 import Link from "next/link";
 import LogoutButton from "@/module/LogoutButton";
 
@@ -45,23 +45,16 @@ async function DashboardSidebar({ children }: DashboardSidebarProps) {
             داشبورد
           </Link>
           <Link
-            href="/dashboard/profile"
-            className="my-[5px] w-full font-normal text-gray-700 transition-colors hover:text-[#304ffe]"
-          >
-            پروفایل
-          </Link>
-          <Link
             href="/dashboard/my-profile"
             className="my-[5px] w-full font-normal text-gray-700 transition-colors hover:text-[#304ffe]"
           >
-            خدمات من
-          </Link>
+آگهی های من          </Link>
+          
           <Link
             href="/dashboard/add"
             className="my-[5px] w-full font-normal text-gray-700 transition-colors hover:text-[#304ffe]"
           >
-            رزرو نوبت
-          </Link>
+ثبت آگهی          </Link>
           <LogoutButton />
         </nav>
       </aside>

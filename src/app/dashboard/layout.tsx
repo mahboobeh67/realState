@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import DashboardSidebar from "@/layout/DashboardSidebar";
-import { authOption } from "../api/auth/[...nextauth]/route";
+import { authOption } from "@/utils/authOptions";
 type DashboardLayoutProps = {
   children: React.ReactNode;
 };

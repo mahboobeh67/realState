@@ -14,8 +14,9 @@ type TextInputData<T> = {
 };
 
 const inputClasses =
-    "w-full rounded-lg border-2 border-dashed border-[#304ffe] bg-white px-3 py-2.5 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-solid focus:border-[#304ffe] focus:ring-2 focus:ring-[#304ffe]/20";
-function TextInput<T extends Record<string, any>>({
+  "w-full rounded-lg border-2 border-dashed border-[#304ffe] bg-white px-3 py-2.5 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-solid focus:border-[#304ffe] focus:ring-2 focus:ring-[#304ffe]/20";
+
+function TextInput<T extends object>({
   title,
   name,
   profileData,
@@ -33,15 +34,16 @@ function TextInput<T extends Record<string, any>>({
     }));
   };
 
+  const inputValue = (profileData[name] as unknown as string) ?? "";
+
   return (
     <div className="flex flex-col gap-2">
-
       <p className="text-sm font-medium text-gray-700">{title}</p>
 
       {textarea ? (
         <textarea
           name={String(name)}
-          value={(profileData[name] as string) ?? ""}
+          value={inputValue}
           onChange={changeHandler}
           className={`${inputClasses} min-h-32 resize-y`}
           placeholder={title}
@@ -50,11 +52,10 @@ function TextInput<T extends Record<string, any>>({
         <input
           type="text"
           name={String(name)}
-          value={(profileData[name] as string) ?? ""}
+          value={inputValue}
           onChange={changeHandler}
           className={inputClasses}
           placeholder={title}
-
         />
       )}
     </div>
@@ -62,4 +63,5 @@ function TextInput<T extends Record<string, any>>({
 }
 
 export default TextInput;
+
 

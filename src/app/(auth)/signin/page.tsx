@@ -1,6 +1,6 @@
 
 import { getServerSession } from 'next-auth'
-import { authOption } from '@/app/api/auth/[...nextauth]/route'
+import { authOption } from '@/utils/authOptions'
 import SigninPage from '@/template/SigninPage'
 import { redirect } from 'next/navigation'
 

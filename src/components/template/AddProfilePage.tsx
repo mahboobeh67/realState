@@ -1,7 +1,12 @@
 "use client";
 
+import CustomDatePiker from "@/module/CustomDatePicker";
+import RadioList from "@/module/RadioList";
 import TextInput from "@/module/TextInput";
+import TextList from "@/module/TextList";
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { ThreeDots } from "react-loader-spinner";
 
 type ProfileFormData = {
   title: string;
@@ -12,7 +17,7 @@ type ProfileFormData = {
   realState: string;
   constructionDate: Date;
   category: string;
-  rules: Record<string, string>;
+  rules: string[];
   amenities: string[];
 };
 
@@ -26,14 +31,29 @@ function AddProfilePage() {
     realState: "",
     constructionDate: new Date(),
     category: "",
-    rules: {},
+    rules: [],
     amenities: [],
   });
-
-  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    console.log(profileData);
+  const [loading, setLoading] = useState(false);
+  const submitHandler = async () => {
+    setLoading(true);
+    const res = await fetch("/api/profile", {
+      method: "POST",
+      body: JSON.stringify(profileData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data: {
+      error?: string;
+      message?: string;
+    } = await res.json();
+    setLoading(false);
+    if (data.error) {
+      toast.error(data.error);
+    } else {
+      toast.success(data.message ?? "عملیات با موفقیت انجام شد.");
+    }
   };
 
   return (
@@ -42,10 +62,7 @@ function AddProfilePage() {
         ثبت آگهی
       </h1>
 
-      <form
-        onSubmit={submitHandler}
-        className="flex max-w-3xl flex-col gap-5"
-      >
+      <form onSubmit={submitHandler} className="flex max-w-3xl flex-col gap-5">
         <TextInput
           title="عنوان آگهی"
           name="title"
@@ -88,17 +105,43 @@ function AddProfilePage() {
           profileData={profileData}
           setProfileData={setProfileData}
         />
-
-        <button
-          type="submit"
-          className="w-fit cursor-pointer rounded-[5px] border-none bg-[#304ffe] px-4 py-2.5 text-base text-white transition-transform duration-100 ease-in hover:scale-105"
-        >
-          ثبت آگهی
-        </button>
+        <RadioList profileData={profileData} setProfileData={setProfileData} />
+        <TextList
+          title="امکانات رفاهی"
+          setProfileData={setProfileData}
+          profileData={profileData}
+          type="rules"
+        />
+        <TextList
+          title="قوانین"
+          setProfileData={setProfileData}
+          profileData={profileData}
+          type="amenities"
+        />
+        <CustomDatePiker
+          setProfileData={setProfileData}
+          profileData={profileData}
+        />
+        <Toaster />
+        {loading ? (
+          <ThreeDots
+            color="#304ffe"
+            ariaLabel="three-dots-loading"
+            visible={true}
+            wrapperStyle={{ margin: "auto" }}
+            height={45}
+          />
+        ) : (
+          <button
+            type="submit"
+            className="w-fit cursor-pointer rounded-[5px] border-none bg-[#304ffe] px-4 py-2.5 text-base text-white transition-transform duration-100 ease-in hover:scale-105"
+          >
+            ثبت آگهی
+          </button>
+        )}
       </form>
     </div>
   );
 }
 
 export default AddProfilePage;
-

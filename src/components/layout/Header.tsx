@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { FiLogIn } from "react-icons/fi";
+import { FiLogIn, FiUser } from "react-icons/fi";
+import { useSession } from "next-auth/react";
 
 function Header() {
+  const { data: session } = useSession();
+
   return (
     <header className="flex justify-between items-center p-[20px] my-[20px] rounded-[10px] bg-[#304ffe] text-white">
       <div>
@@ -23,16 +28,27 @@ function Header() {
       </div>
 
       <div>
-        <Link
-          href="/signin"
-          className="flex items-center bg-white text-[#304ffe] px-[7px] py-[3px] rounded-[5px] transition-all ease-in duration-100 hover:bg-[#304ffe] hover:text-white border border-transparent hover:border-white"
-        >
-          <FiLogIn className="text-[25px]" />
-          <span className="mr-[5px]">ورود</span>
-        </Link>
+        {session ? (
+          <Link
+            href="/dashboard"
+            className="flex items-center bg-white text-[#304ffe] px-[7px] py-[3px] rounded-[5px] transition-all ease-in duration-100 hover:bg-[#304ffe] hover:text-white border border-transparent hover:border-white"
+          >
+            <FiUser className="text-[25px]" />
+            <span className="mr-[5px]">داشبورد</span>
+          </Link>
+        ) : (
+          <Link
+            href="/signin"
+            className="flex items-center bg-white text-[#304ffe] px-[7px] py-[3px] rounded-[5px] transition-all ease-in duration-100 hover:bg-[#304ffe] hover:text-white border border-transparent hover:border-white"
+          >
+            <FiLogIn className="text-[25px]" />
+            <span className="mr-[5px]">ورود</span>
+          </Link>
+        )}
       </div>
     </header>
   );
 }
 
 export default Header;
+

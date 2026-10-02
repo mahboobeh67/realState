@@ -1,7 +1,7 @@
 import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { getServerSession } from "next-auth";
-import {authOption } from "@/api/auth/[...nextauth]/route"
+import { authOption } from "@/utils/authOptions";
 import Link from "next/link";
 import LogoutButton from "@/module/LogoutButton";
 

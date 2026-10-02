@@ -15,7 +15,8 @@ function SigninPage() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const signinHandler = async (e) => {
+
+  const signinHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -31,6 +32,7 @@ function SigninPage() {
       toast.error(res.error);
     } else {
       router.push("/");
+      router.refresh();
     }
   };
 
@@ -41,7 +43,7 @@ function SigninPage() {
       </h4>
 
       <form
-        action="#"
+        onSubmit={signinHandler}
         className="flex flex-col max-w-[700px] shadow-[0_4px_15px_rgba(48,79,254,0.29)] border-2 border-[#304ffe] p-10 rounded-xl mb-[30px]"
       >
         <label htmlFor="email" className="text-[#304ffe] mb-2.5 font-normal">
@@ -91,7 +93,6 @@ function SigninPage() {
         ) : (
           <button
             type="submit"
-            onClick={signinHandler}
             className="border-none bg-[#304ffe] text-white text-[1.2rem] font-normal rounded-md transition-all ease-in duration-100 cursor-pointer py-2 hover:scale-105"
           >
             ورود
@@ -102,7 +103,7 @@ function SigninPage() {
       <p className="text-gray-500 text-[1.1rem]">
         حساب کاربری ندارید؟
         <Link
-          href="signup"
+          href="/signup"
           className="text-[#304ffe] mr-2.5 border-b-[3px] border-gray-500"
         >
           ثبت نام
