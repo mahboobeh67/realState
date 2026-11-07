@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast"; // 🌟 ۱. ایمپورت کردن Toaster
 
 import "./globals.css";
 import NextAuthProvider from "src/providers/NextAuthProvider";
 import { yekan } from "@/utils/fonts";
 import Layout from "@/layout/Layout";
-
 
 export const metadata: Metadata = {
   title: " املاک",
@@ -20,9 +20,12 @@ export default function RootLayout({
     <html lang="fa" dir="rtl">
       <body className={yekan.className}>
         <NextAuthProvider>
+          <Toaster position="top-center" reverseOrder={false} />
+          
           <Layout>{children}</Layout>
         </NextAuthProvider>
       </body>
     </html>
   );
 }
+

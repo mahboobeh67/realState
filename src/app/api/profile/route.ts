@@ -20,6 +20,10 @@ type CreatePropertyBody = {
   category: string;
 };
 
+type UpdateReceptionBody = CreatePropertyBody & {
+  _id: string;
+};
+
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
@@ -37,14 +41,12 @@ export async function POST(req: NextRequest) {
       category,
     } = body;
 
-    console.log("Body received:", body);
-
     const session = await getServerSession(authOption);
 
     if (!session) {
       return NextResponse.json(
         { error: "لطفا وارد حساب کاربری خود شوید" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -53,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "حساب کاربری یافت نشد" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -69,7 +71,7 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "لطفا اطلاعات معتبر وارد کنید" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest) {
     if (isNaN(cleanPrice)) {
       return NextResponse.json(
         { error: "قیمت وارد شده معتبر نیست" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,13 +101,120 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: "آگهی جدید اضافه شد", data: newProfile },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
-    console.log(err);
+    console.error("POST Error:", err);
     return NextResponse.json(
       { error: "مشکلی در سرور رخ داده است" },
-      { status: 500 }
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    await connectDB();
+    const body: UpdateReceptionBody = await req.json();
+    const {
+      _id,
+      title,
+      description,
+      location,
+      phone,
+      realState,
+      price,
+      constructionDate,
+      amenities,
+      rules,
+      category,
+    } = body;
+
+    if (
+      !_id ||
+      !title ||
+      !location ||
+      !description ||
+      !phone ||
+      !realState ||
+      !price ||
+      !constructionDate ||
+      !category
+    ) {
+      return NextResponse.json(
+        { error: "لطفا تمام اطلاعات الزامی را وارد کنید" },
+        { status: 400 },
+      );
+    }
+
+    const session = await getServerSession(authOption);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "لطفا وارد حساب کاربری خود شوید" },
+        { status: 401 },
+      );
+    }
+
+    const user = await User.findOne({ email: session?.user?.email });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "حساب کاربری یافت نشد" },
+        { status: 404 },
+      );
+    }
+
+    const profile = await Profile.findOne({ _id });
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: "آگهی مورد نظر یافت نشد" },
+        { status: 404 },
+      );
+    }
+
+    // 🔴 اصلاح باگ اصلى: متد equals با حرف s در انتهای آن
+    if (!user._id.equals(profile.userId)) {
+      return NextResponse.json(
+        { error: "دسترسی شما به این آگهی محدود شده است" },
+        { status: 403 },
+      );
+    }
+
+    const cleanPrice = Number(p2e(price));
+    const cleanPhone = p2e(phone);
+
+    if (isNaN(cleanPrice)) {
+      return NextResponse.json(
+        { error: "قیمت وارد شده معتبر نیست" },
+        { status: 400 },
+      );
+    }
+
+    profile.title = title;
+    profile.description = description;
+    profile.location = location;
+    profile.phone = cleanPhone;
+    profile.realState = realState;
+    profile.price = cleanPrice;
+    profile.constructionDate = constructionDate;
+    profile.amenities = amenities;
+    profile.rules = rules;
+    profile.category = category;
+
+    // 🔴 اصلاح باگ دوم: اضافه کردن await
+    await profile.save();
+
+    return NextResponse.json(
+      { message: "آگهی با موفقیت ویرایش شد" },
+      { status: 200 },
+    );
+  } catch (err) {
+    console.error("PATCH Error:", err);
+    return NextResponse.json(
+      { error: "مشکلی در سرور رخ داده است" },
+      { status: 500 },
     );
   }
 }
