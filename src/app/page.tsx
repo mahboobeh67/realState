@@ -1,10 +1,9 @@
+import HomePage from "@/template/HomePage";
 
 
 export default function Home() {
   return (
 
- <>
- <h1>بنگاه اجاره و فروش ملک</h1>
- </>
+<HomePage />
   )
 }
